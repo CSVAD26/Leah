@@ -1,5 +1,5 @@
 
-let eyeOffset =40;
+let eyeOffset=40;
 let deg_start=0;
 let deg_end=180;
 
@@ -9,8 +9,8 @@ function setup() {
 }
 
 function draw() {
-  let centerX = width/2;
-  let centerY = height/2;
+  let centerX=width/2;
+  let centerY=height/2;
   background(195, 228, 247);
 
   //head
@@ -24,7 +24,7 @@ function draw() {
   fill(255);
   circle(centerX-eyeOffset, centerY-eyeOffset, 50);
   circle(centerX+eyeOffset, centerY-eyeOffset, 50);
-  
+
   //pupils
   stroke(0);
   fill(0);
