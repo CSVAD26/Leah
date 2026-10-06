@@ -1,4 +1,4 @@
-// Swatch examples in maximum amount of 5 that can be selected, moved, and recolored. Aids in understanding how color perception is relative based on other colors.
+// Swatch examples in maximum amount of 10 that can be selected, moved, and recolored. Aids in understanding how color perception is relative based on other colors.
 let swatch1;
 let swatch2;
 let swatch3;
@@ -6,6 +6,7 @@ let swatch4;
 let swatch5;
 
 let swatches = [];
+let swatchCount=3;
 
 // Change the swatch's color: when pressing "c" and drag and hold
 //Change the swatch's size: when pressing "s" and drag and hold
@@ -59,7 +60,24 @@ function keyPressed() {
   if(key==="s" || key==="S"){
     sizeShift = true;
   }
-  
+  // add new swatch. Maximum amount of swatches = 10
+  if(key==="a"||key==="A"){
+    if(swatches.length < 10){
+      let s = new Swatch(mouseX, mouseY, 100, 100);
+      swatches.push(s);
+      swatchCount++;
+    }
+  }
+  //delete swatch when pressing "d"
+  for (i=swatches.length; i--; i>0){
+    let s = swatches[i];
+    if(s.selected==true){
+      if(key==="d" || key==="D"){
+        swatches.splice(i, 1);
+        swatchCount--;
+      }
+    }
+  }
 }
 
 function keyReleased() {
