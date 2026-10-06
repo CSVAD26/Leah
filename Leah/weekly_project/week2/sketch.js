@@ -34,7 +34,7 @@ function draw() {
 
   fill(0);
   //change text here: Rules
-  text('" a " : add new swatch\n" d " : delete selected\n" s " : change size\n" c " : change color', 10, height-70);
+  text('" a " : add new swatch\n" d " : delete selected\n" s " : change sizegit \n" c " : change color', 10, height-70);
 }
 
 function mousePressed() {
@@ -43,9 +43,14 @@ function mousePressed() {
     let s = swatches[i];
     let hitTest = s.hitTest(mouseX, mouseY);
 
+    //bring selected swatch to the front
     if (hitTest) {
       s.selected = true;
       print("selected", i);
+
+      let selectedSwatch = swatches.splice(i,1); //[0]: splice() returns an array of removed items
+      swatches.push(selectedSwatch[0]);
+
       return;
     }
   }
@@ -110,7 +115,7 @@ function mouseWheel(event) {
 }
 
 
-//1. move swatch 2. change swatch size 3. change hue
+//Dragging does three things: 1. move swatch 2. change swatch size 3. change hue
 function mouseDragged() {
   // Compare the current pointer position with the previous frame's position.
   let delta = createVector(mouseX - pmouseX, mouseY - pmouseY);
@@ -160,7 +165,7 @@ class Swatch {
     rect(this.pos.x, this.pos.y, this.w, this.h);
     if (this.selected) {
       noFill();
-      stroke(0);
+      stroke(255);
       strokeWeight(2);
       rect(this.pos.x, this.pos.y, this.w, this.h);
       noStroke();
