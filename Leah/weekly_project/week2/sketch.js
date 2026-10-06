@@ -34,7 +34,7 @@ function draw() {
 
   fill(0);
   //change text here: Rules
-  text('click to select a swatch, drag to move, hold down key to change hue',10, height-10);
+  text('" a " : add new swatch\n" d " : delete selected\n" s " : change size\n" c " : change color', 10, height-70);
 }
 
 function mousePressed() {
@@ -71,9 +71,9 @@ function keyPressed() {
   //delete swatch when pressing "d"
   for (i=swatches.length; i--; i>0){
     let s = swatches[i];
-    if(s.selected==true){
+    if(s.selected == true){
       if(key==="d" || key==="D"){
-        swatches.splice(i, 1);
+        swatches.splice(i, 1);   // Remove 1 swatch from the swatches array if selected and pressing "d"
         swatchCount--;
       }
     }
