@@ -2,8 +2,6 @@
 let swatch1;
 let swatch2;
 let swatch3;
-let swatch4;
-let swatch5;
 
 let swatches = [];
 let swatchCount=3;
@@ -29,7 +27,7 @@ function draw() {
   //colorMode(RGB, 255);
   colorMode(HSB, 360, 100, 100);
   background(0, 0, 75);
-  // Draw every swatch, including its selection outline when selected.
+  // Draw 3 swatches first, including its selection outline when selected.
   for (let i = 0; i < swatches.length; i++) {
     swatches[i].draw();
   }
