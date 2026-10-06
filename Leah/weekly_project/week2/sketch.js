@@ -15,6 +15,7 @@ let sizeShift= false;
 
 function setup() {
   createCanvas(800, 800);
+  colorMode(HSB, 360, 100, 100);
 
   // Create 3 swatches with different positions and sizes.
   swatch1 = new Swatch(100, 100, 500, 500);
@@ -25,8 +26,9 @@ function setup() {
 }
 
 function draw() {
-  colorMode(RGB, 255);
-  background(200, 200, 200);
+  //colorMode(RGB, 255);
+  colorMode(HSB, 360, 100, 100);
+  background(0, 0, 75);
   // Draw every swatch, including its selection outline when selected.
   for (let i = 0; i < swatches.length; i++) {
     swatches[i].draw();
@@ -151,11 +153,11 @@ function deselectAllSwatches() {
 
 class Swatch {
   constructor(x, y, w, h) {
-    // Store geometry and assign a random starting RGB color.
+    // Store geometry and assign a random starting HSB color.
     this.pos = createVector(x, y);
     this.w = w;
     this.h = h;
-    this.c = color(random(255), random(255), random(255));
+    this.c = color(random(360), random(100), random(100));
     this.selected = false;
   }
 
@@ -185,15 +187,15 @@ class Swatch {
 
   updateColor(delta, wheelDelta) {
     console.log("updateColor", wheelDelta);
-    // Adjust red with horizontal dragging or the wheel, and green with vertical dragging.
-    // This changes RGB channels;
-    // WHEEL DELTA IS NOT RELIABLE ACROSS BROWSERS.
-    let r = red(this.c) + delta.x * 0.5;
-    let g = green(this.c) + delta.y * 0.5;
-    let b = blue(this.c) + wheelDelta* 0.5;
 
-    this.c = color(constrain(r, 0, 255),
-                   constrain(g, 0, 255),
-                   constrain(b, 0, 255));
+    let h = hue(this.c) + delta.x * 0.5;
+    let s = saturation(this.c) + delta.y * 0.5;
+    let br = brightness(this.c) + wheelDelta * 0.5;
+
+    this.c = color(
+      constrain(h, 0, 360),
+      constrain(s, 0, 100),
+      constrain(br, 0, 100)
+    );
   }
 }
