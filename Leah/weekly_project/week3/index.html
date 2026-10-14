@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Assignment 3- K-Means Video Segmentation</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+
+  <body>
+    <h2>K-Means Color Grouping</h2>
+
+    <div id="status" class="info">Loading OpenCV.js...</div>
+    <div class="info">Press <strong>+</strong> or <strong>-</strong> to adjust clusters (k = <span id="kVal">3</span>)</div>
+
+    <!-- Hidden video element serving as webcam frame source -->
+    <video id="videoInput" width="320" height="240" autoplay playsinline></video>
+
+    <script src="libraries/p5.min.js"></script>
+
+    <!-- Define Module configuration BEFORE loading opencv.js -->
+    <script>
+      var Module = {
+        onRuntimeInitialized: function() {
+          cvReady = true;
+          const statusEl = document.getElementById('status');
+          if (statusEl) statusEl.innerText = 'OpenCV.js loaded successfully.';
+          if (typeof startCamera === 'function') {
+            startCamera();
+          }
+        }
+      };
+    </script>
+
+    <!-- Load OpenCV.js -->
+    <script src="sketch.js"></script> 
+    <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+    
+
+  </body>
+</html>

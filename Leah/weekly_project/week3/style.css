@@ -1,0 +1,21 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: monospace; padding: 20px;
+  display:flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+}
+
+canvas {
+  border: 5px solid #333;
+  background-color: #ffffff;
+}
+
+#videoInput { 
+  display: none; 
+} /* Hide raw video element */
+
+.info { 
+  margin-bottom: 10px; 
+}
