@@ -1,3 +1,6 @@
-## Sample README File
+## Mini Assignment 3
 
-This is a sample project. Tell me a little about what it does!
+Grouping colors with k-means.
+1. Using OpenCV to capture video in real time.
+2. Group the colors with k means.
+3. Adjust the number of groups with "+" and "-"
