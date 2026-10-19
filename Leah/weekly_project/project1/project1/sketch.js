@@ -131,6 +131,7 @@ function audioanAnalysis(spectrum, micLevel) {
 
 function draw() {
   background(15, 25);
+  orbitControl();
 
   // 1. Audio Frequency Analysis -> Update Harmonics
   let spectrum = fft.analyze();

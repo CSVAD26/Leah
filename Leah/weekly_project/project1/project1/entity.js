@@ -26,7 +26,7 @@ class Entity {
   spawnParticle() {
     let theta = random(TWO_PI);
     let phi = acos(random(-1, 1));
-    let maxLife = random(90, 1000); // Particle lifespan in frames
+    let maxLife = random(60, 200); // Particle lifespan in frames
 
     let initWave = sin(theta * this.harmonics) * 18;
     let initRadius = this.currentDisplayRadius + initWave;
@@ -69,13 +69,14 @@ class Entity {
 
     this.spectrum = spectrum; 
 
-    if (this.particles.length > 3000) {
-      this.particles.splice(0, this.particles.length - 3000);
+    if (this.particles.length > 5000) {
+      this.particles.splice(0, this.particles.length - 5000);
     }
   }
 
   display() {
     push();
+
     translate(this.pos.x, this.pos.y, this.pos.z);
     
     colorMode(HSB, 360, 100, 100, 255);
@@ -95,9 +96,9 @@ class Entity {
 
     // Color and brightness mappings
     let liveHue = map(this.centroid, 261.63, 523.25, 0, 360, true);
-    let brightnessVal = map(totalEnergy, 400, 765, 50, 100); // map(totalEnergy, 0, 765, 50, 100)
+    let brightnessVal = map(totalEnergy, 0, 765, 50, 100);  //total band range (0,255)*3, bass + mid + high
 
-    // Single clean loop to update and render all active particles
+    // Update and render all active particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       let p = this.particles[i];
 
@@ -106,6 +107,11 @@ class Entity {
         this.particles.splice(i, 1);
         continue;
       }
+
+      // Store previous position before updating
+      p.prevX = p.currentX;
+      p.prevY = p.currentY;
+      p.prevZ = p.currentZ;
 
       let n = noise(p.noiseOffset + frameCount * noiseSpeed);
       let harmonicWave = sin(p.theta * this.harmonics) * 18;
@@ -120,14 +126,54 @@ class Entity {
       p.currentY = lerp(p.currentY, targetY, 0.2);
       p.currentZ = lerp(p.currentZ, targetZ, 0.2);
 
-      // Fade out alpha smoothly over time
+      // Fade out alpha over time
       let alphaVal = map(p.life, 0, p.maxLife, 0, 255);
 
+
+      // Variation 1: dots activated by frequency
+      //stroke(liveHue, 90, brightnessVal, alphaVal);
+
+      //point(p.currentX, p.currentY, p.currentZ);
+
+      // Variation 2: trails activated by bass
       stroke(liveHue, 90, brightnessVal, alphaVal);
-      point(p.currentX, p.currentY, p.currentZ);
+
+      if(totalEnergy > 55){
+        
+        let vx = p.currentX - p.preX;
+        let vy = p.currentY - p.prevY;
+        let vz = p.currentZ - p.prevZ;
+
+        beginShape(LINES);
+        vertex(p.currentX, p.currentY, p.currentZ);
+        vertex(p.currentX, p.currentY + vy * 3, p.currentZ + vz * 3);
+        endShape();
+        
+        /*
+       beginShape(LINES);
+       vertex(p.currentX, p.currentY, p.currentZ);
+       vertex(p.currentX + this.velocity.x*3, p.currentY + this.velocity.y*3, p.currentZ + this.velocity.z*3;
+       */
+        } 
+     // else if (audioData.mid>50){
+        //begineShape(LINES);
+        //vertex(p.currentX, p.currentY, p.currentZ);
+        //vertex(p.currentX + vx * 3, p.currentY + vy * 3, p.currentZ + vz * 3);
+        //endShape();
+     // }
+      else{
+        point(p.currentX, p.currentY, p.currentZ);  //Variation 1: dots activated by frequency
+      }
+
+
+    
+
+
     }
 
-    colorMode(RGB, 255, 255, 255, 255);
-    pop();
+      
+      colorMode(RGB, 255, 255, 255, 255);
+      pop();
   }
 }
+    
