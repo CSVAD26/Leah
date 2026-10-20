@@ -1,16 +1,14 @@
 let entities = [];
 let mic, fft;
-let highPassFilter, lowPassFilter;
 let bandPass;
 let capture;
 let opencvReady = false;
+let resetBtn;
 
 // OpenCV working matrices
 let src, hsv, mask, contours, hierarchy;
 let videoCanvas, videoCtx;
-
-// Kalman filtered hand position
-let handKalman;
+let handKalman; //kalman filter
 
 //sound sensitivity and initial harmonics
 let mappedHarmonics = 1;
@@ -22,7 +20,15 @@ function onOpenCvReady() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight, WEBGL);
+  let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  
+  // Force enable right click to menu (so that orbitcontrol in draw does not block it)
+  canvas.elt.addEventListener('contextmenu', (e) => {
+    e.stopImmediatePropagation();
+  }, true);
+
+  // Reset Canvas button in DOM
+  resetBtn = createButton('Reset Canvas');
 
   // Initialize Audio
   mic = new p5.AudioIn();
@@ -42,24 +48,6 @@ function setup() {
   console.log("fft bucket size:", fft.bins);
   fft.setInput(bandPass);
 
-  /*
-  // High pass and low pass filter to filter out audio frequency not in the desired range
-  highPassFilter = new p5.Filter('highpass');
-  highPassFilter.freq(200);
-  highPassFilter.disconnect();
-
-  lowPassFilter = new p5.Filter('lowpass');
-  lowPassFilter.freq(523);
-  lowPassFilter.disconnect();
-
-  mic.connect(highPassFilter);
-  highPassFilter.connect(lowPassFilter);
-
-  //initialize FFT
-  fft = new p5.FFT();
-  console.log("fft bucket size:", fft.bins);
-  lowPassFilter.connect(fft);
-  */
   // Initialize Webcam for OpenCV processing
   capture = createCapture(VIDEO);
   capture.size(640, 480);
@@ -131,8 +119,21 @@ function audioanAnalysis(spectrum, micLevel) {
 
 function draw() {
   background(15, 25);
-  orbitControl();
 
+
+  //reset button update with window size
+  resetBtn.position(width*0.5, height*0.75);
+  resetBtn.class('resetButton');
+  
+  // Reset button click handler resets entities back to single center state
+  resetBtn.mousePressed(() => {
+    entities = [new Entity(0, 0, 0)];
+  });
+
+  if ( mouseIsPressed && mouseButton == LEFT)
+  {
+    orbitControl();
+  }
   // 1. Audio Frequency Analysis -> Update Harmonics
   let spectrum = fft.analyze();
   let micLevel = mic.getLevel();
@@ -218,7 +219,7 @@ function draw() {
               entities = [child1, child2];
             }
           }
-        }
+        }   
       }
 
       // Clean up OpenCV memory matrices to prevent memory leaks

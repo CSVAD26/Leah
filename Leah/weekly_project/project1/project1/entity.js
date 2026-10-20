@@ -41,6 +41,9 @@ class Entity {
       currentX: startX,
       currentY: startY,
       currentZ: startZ,
+      prevX: startX,     // Track previous X position
+      prevY: startY,     
+      prevZ: startZ,     
       life: maxLife,
       maxLife: maxLife,
       colorHue: random(360)
@@ -115,7 +118,6 @@ class Entity {
 
       let n = noise(p.noiseOffset + frameCount * noiseSpeed);
       let harmonicWave = sin(p.theta * this.harmonics) * 18;
-
       let currentRadius = this.radius + bassPulse + harmonicWave + (n * 50 - 25);
       
       let targetX = currentRadius * sin(p.phi) * cos(p.theta);
@@ -137,41 +139,36 @@ class Entity {
 
       // Variation 2: trails activated by bass
       stroke(liveHue, 90, brightnessVal, alphaVal);
+      
+
+      //responsive visuals
+      let vx = p.currentX - p.prevX;
+      let vy = p.currentY - p.prevY;
+      let vz = p.currentZ - p.prevZ;
 
       if(totalEnergy > 55){
-        
-        let vx = p.currentX - p.preX;
-        let vy = p.currentY - p.prevY;
-        let vz = p.currentZ - p.prevZ;
-
         beginShape(LINES);
         vertex(p.currentX, p.currentY, p.currentZ);
         vertex(p.currentX, p.currentY + vy * 3, p.currentZ + vz * 3);
         endShape();
-        
-        /*
-       beginShape(LINES);
-       vertex(p.currentX, p.currentY, p.currentZ);
-       vertex(p.currentX + this.velocity.x*3, p.currentY + this.velocity.y*3, p.currentZ + this.velocity.z*3;
-       */
         } 
-     // else if (audioData.mid>50){
-        //begineShape(LINES);
-        //vertex(p.currentX, p.currentY, p.currentZ);
-        //vertex(p.currentX + vx * 3, p.currentY + vy * 3, p.currentZ + vz * 3);
-        //endShape();
-     // }
+        else if (totalEnergy>45 && totalEnergy<55){
+          stroke(205);
+          ellipsoid(p.currentX*vx*0.02, p.currentY*vy*0.02, p.currentZ*vz*0.04 );
+      }
       else{
         point(p.currentX, p.currentY, p.currentZ);  //Variation 1: dots activated by frequency
       }
-
-
-    
-
-
     }
 
-      
+    
+    //second motion trails
+      for (let p of this.particles) {
+        let alphaVal = map(p.life, 0, p.maxLife, 0, 100);
+        stroke(p.hue, 85, 90, alphaVal);
+        line(p.prevX, p.prevY, p.prevZ, p.currentX, p.currentY, p.currentZ);
+      }
+        
       colorMode(RGB, 255, 255, 255, 255);
       pop();
   }

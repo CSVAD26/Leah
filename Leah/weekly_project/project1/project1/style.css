@@ -26,3 +26,20 @@ h2 {
   font-size: 20px;
   font-weight: bold;
 }
+
+.resetButton {
+  z-index: 100;
+  padding: 8px 16px;
+  background-color: #d8d8d8;
+  color: #464646;
+  font-family: Trebuchet MS, sans-serif;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+.hint {
+   color: #ffffff;
+   padding: 4px;
+}
