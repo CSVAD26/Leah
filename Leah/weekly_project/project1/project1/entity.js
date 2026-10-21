@@ -154,7 +154,15 @@ class Entity {
         } 
         else if (totalEnergy>45 && totalEnergy<55){
           stroke(205);
-          ellipsoid(p.currentX*vx*0.02, p.currentY*vy*0.02, p.currentZ*vz*0.04 );
+          strokeWeight(0.7);
+          ellipsoid(p.currentX*vx*0.02, p.currentY*vy*0.02, p.currentZ*vz*0.04, 5,5,5 );
+          
+      }
+      else if (totalEnergy>75 && totalEnergy){
+          stroke(215, 245, 98);
+          strokeWeight(10);
+          ellipsoid(p.currentX*vx*0.04, p.currentY*vy*0.02, p.currentZ*vz*0.01);
+          
       }
       else{
         point(p.currentX, p.currentY, p.currentZ);  //Variation 1: dots activated by frequency
@@ -162,7 +170,7 @@ class Entity {
     }
 
     
-    //second motion trails
+    //second motion trails in diffent tone
       for (let p of this.particles) {
         let alphaVal = map(p.life, 0, p.maxLife, 0, 100);
         stroke(p.hue, 85, 90, alphaVal);
