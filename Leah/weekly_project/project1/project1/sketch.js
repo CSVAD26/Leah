@@ -20,9 +20,10 @@ function onOpenCvReady() {
 }
 
 function setup() {
-  let canvas = createCanvas(windowWidth, windowHeight, { alpha: true, depth: true });
+  let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   
   // Forvr WebGL to use standard sRGB color space
+  
   let gl = canvas.elt.getContext('webgl2')|| canvas.elt.getContext('webgl');
   if(gl && gl.drawingBufferColorSpace){
     gl.drawingBufferColorSpace = 'srgb';
