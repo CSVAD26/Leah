@@ -20,8 +20,16 @@ function onOpenCvReady() {
 }
 
 function setup() {
-  let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  let canvas = createCanvas(windowWidth, windowHeight, { alpha: true, depth: true });
   
+  // Forvr WebGL to use standard sRGB color space
+  let gl = canvas.elt.getContext('webgl2')|| canvas.elt.getContext('webgl');
+  if(gl && gl.drawingBufferColorSpace){
+    gl.drawingBufferColorSpace = 'srgb';
+  }
+
+  frameRate(60);
+
   // Force enable right click to menu (so that orbitcontrol in draw does not block it)
   canvas.elt.addEventListener('contextmenu', (e) => {
     e.stopImmediatePropagation();
