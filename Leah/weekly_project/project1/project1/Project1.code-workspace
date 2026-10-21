@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../../../MAT236/code_samples/project1_examples"
+		},
+		{
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "Leah"
+	}
+}
