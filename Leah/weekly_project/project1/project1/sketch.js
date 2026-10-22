@@ -183,6 +183,8 @@ function draw() {
   let spectrum = fft.analyze();
   let micLevel = mic.getLevel();
 
+  console.log("mic level", micLevel.toFixed(4));
+  
   let audio = audioanAnalysis(spectrum, micLevel);
   mappedHarmonics = audio.centroid; // Update global harmonics for entities
 

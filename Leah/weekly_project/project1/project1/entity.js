@@ -141,6 +141,57 @@ class Entity {
       let vy = p.currentY - p.prevY;
       let vz = p.currentZ - p.prevZ;
 
+
+      /*
+      // --- CLEANED & NOISE-RESISTANT AUDIO THRESHOLDS ---
+      if (totalEnergy < 15) {
+        // 1. SILENCE / ROOM NOISE: Do nothing or render subtle static points
+        target.point(p.currentX, p.currentY, p.currentZ);
+      } 
+      else if (totalEnergy >= 15 && totalEnergy < 40) {
+        // 2. SOFT SPEECH / WHISPER: Short directional lines
+         vx = p.currentX - p.prevX;
+         vy = p.currentY - p.prevY;
+         vz = p.currentZ - p.prevZ;
+
+        target.beginShape(LINES);
+        target.vertex(p.currentX, p.currentY, p.currentZ);
+        target.vertex(p.currentX + vx * 2, p.currentY + vy * 2, p.currentZ + vz * 2);
+        target.endShape();
+      } 
+      else if (totalEnergy >= 40 && totalEnergy < 65) {
+        // 3. NORMAL SPEAKING VOICE: Medium gray ellipsoids
+         vx = p.currentX - p.prevX;
+         vy = p.currentY - p.prevY;
+         vz = p.currentZ - p.prevZ;
+
+        target.stroke(205);
+        target.strokeWeight(0.7);
+        target.ellipsoid(p.currentX * vx * 0.02, p.currentY * vy * 0.02, p.currentZ * vz * 0.04, 5, 5, 5);
+      } 
+      else if (totalEnergy >= 65 && totalEnergy < 85) {
+        // 4. LOUD SPEECH: Long directional energy spikes
+         vx = p.currentX - p.prevX;
+         vy = p.currentY - p.prevY;
+         vz = p.currentZ - p.prevZ;
+
+        target.beginShape(LINES);
+        target.vertex(p.currentX, p.currentY, p.currentZ);
+        target.vertex(p.currentX + vx * 5, p.currentY + vy * 5, p.currentZ + vz * 5);
+        target.endShape();
+      } 
+      else {
+        // 5. SHOUTING / PEAKS (> 85): Heavy glowing ellipsoids
+         vx = p.currentX - p.prevX;
+         vy = p.currentY - p.prevY;
+         vz = p.currentZ - p.prevZ;
+
+        target.stroke(215, 245, 98);
+        target.strokeWeight(5);
+        target.ellipsoid(p.currentX * vx * 0.04, p.currentY * vy * 0.02, p.currentZ * vz * 0.01);
+      }
+        */
+      
       if (totalEnergy > 5 && totalEnergy < 35) {
         target.beginShape(LINES);
         target.vertex(p.currentX, p.currentY, p.currentZ);
@@ -168,7 +219,8 @@ class Entity {
       //strokeWeight(1);
       target.line(p.prevX, p.prevY, p.prevZ, p.currentX, p.currentY, p.currentZ);
     }
-        
+    
+    
     target.colorMode(RGB, 255, 255, 255, 255);
     target.pop();
   }
