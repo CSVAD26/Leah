@@ -22,7 +22,7 @@ This project leverages that transformation. By isolating a specific structural w
 
 ## Technical Approach
 
-These are the technical approach I use in the project:
+These are the technical approaches I use in the project:
 * **FFT Spectral Analysis: Converts raw time-domain waveforms into frequency bins, allowing the code to read the underlying spectral components rather than just raw volume.
 Bandpass Filtering: Isolates a precise structural octave window, spanning from C4 to C5, to focus on musical pitches and vocal frequencies. Specific frequencies where there are harmonics create a uniformed color, resembling the harmonic wave forms.
 * **Audio-Driven Geometry: Maps frequency bins and amplitude directly into dynamic harmonic structures, particle behaviors, and visual hues.
