@@ -1,9 +1,5 @@
 # Unravel
 
-An interactive audio-visual canvas that translates physical gestures and vocal frequencies into responsive digital geometry.
-
----
-
 ## Intention
 
 Drawing is an intuitive behavior that humans possess instinctively. Drawing creates spaces to explore and express. While drawing creates artifacts with a medium, the act of drawing itself also carries meaning for us, whether it is for documentation, expression, or deconstructing reality. 
