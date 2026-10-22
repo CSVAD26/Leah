@@ -77,29 +77,30 @@ class Entity {
     }
   }
 
-  display() {
-    push();
+  display(pg) {
+    let target = pg || window;
+    target.push();
 
-    translate(this.pos.x, this.pos.y, this.pos.z);
+    target.translate(this.pos.x, this.pos.y, this.pos.z);
     
-    colorMode(HSB, 360, 100, 100, 255);
-    noFill();
+    target.colorMode(HSB, 360, 100, 100, 255);
+    target.noFill();
 
     // Calculate dynamic values once per frame before looping particles
     let totalEnergy = (this.bass + this.mid + this.treble) + 0.001;
-    let dynamicWeight = map(totalEnergy, 0, 400, 1, 20, true) + 5;
-    strokeWeight(dynamicWeight);
+    let dynamicWeight = target.map(totalEnergy, 0, 400, 1, 20, true) + 5;
+    target.strokeWeight(dynamicWeight);
 
-    let noiseSpeed = map(this.treble, 0, 255, 0.01, 0.25);
-    let bassPulse = map(this.bass, 0, 255, 0, 180, true);
-    let frequencyScale = map(this.harmonics, 1, 12, 50, 150);
+    let noiseSpeed = target.map(this.treble, 0, 255, 0.01, 0.25);
+    let bassPulse = target.map(this.bass, 0, 255, 0, 180, true);
+    let frequencyScale = target.map(this.harmonics, 1, 12, 50, 150);
     let targetDisplayRadius = this.radius + bassPulse + frequencyScale;
 
-    this.currentDisplayRadius = lerp(this.currentDisplayRadius, targetDisplayRadius, 0.15);
+    this.currentDisplayRadius = target.lerp(this.currentDisplayRadius, targetDisplayRadius, 0.15);
 
     // Color and brightness mappings
-    let liveHue = map(this.centroid, 261.63, 523.25, 0, 360, true);
-    let brightnessVal = map(totalEnergy, 0, 765, 50, 100);  //total band range (0,255)*3, bass + mid + high
+    let liveHue = target.map(this.centroid, 261.63, 523.25, 0, 360, true);
+    let brightnessVal = target.map(totalEnergy, 0, 765, 50, 100);  //total band range (0,255)*3, bass + mid + high
 
     // Update and render all active particles (Combined into a single loop for performance)
     for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -116,24 +117,24 @@ class Entity {
       p.prevY = p.currentY;
       p.prevZ = p.currentZ;
 
-      let n = noise(p.noiseOffset + frameCount * noiseSpeed);
-      let harmonicWave = sin(p.theta * this.harmonics) * 18;
+      let n = target.noise(p.noiseOffset + frameCount * noiseSpeed);
+      let harmonicWave = target.sin(p.theta * this.harmonics) * 18;
       let currentRadius = this.radius + bassPulse + harmonicWave + (n * 50 - 25);
       
-      let targetX = currentRadius * sin(p.phi) * cos(p.theta);
-      let targetY = currentRadius * sin(p.phi) * sin(p.theta);
-      let targetZ = currentRadius * cos(p.phi);
+      let targetX = currentRadius * target.sin(p.phi) * target.cos(p.theta);
+      let targetY = currentRadius * target.sin(p.phi) * target.sin(p.theta);
+      let targetZ = currentRadius * target.cos(p.phi);
 
-      p.currentX = lerp(p.currentX, targetX, 0.2);
-      p.currentY = lerp(p.currentY, targetY, 0.2);
-      p.currentZ = lerp(p.currentZ, targetZ, 0.2);
+      p.currentX = target.lerp(p.currentX, targetX, 0.2);
+      p.currentY = target.lerp(p.currentY, targetY, 0.2);
+      p.currentZ = target.lerp(p.currentZ, targetZ, 0.2);
 
       // Fade out alpha over time
-      let alphaVal = map(p.life, 0, p.maxLife, 0, 255);
-      let trailAlpha = map(p.life, 0, p.maxLife, 0, 100);
+      let alphaVal = target.map(p.life, 0, p.maxLife, 0, 255);
+      let trailAlpha = target.map(p.life, 0, p.maxLife, 0, 100);
 
       // Variation 2: trails activated by bass
-      stroke(liveHue, 90, brightnessVal, alphaVal);
+      target.stroke(liveHue, 90, brightnessVal, alphaVal);
       
       //responsive visuals
       let vx = p.currentX - p.prevX;
@@ -141,34 +142,34 @@ class Entity {
       let vz = p.currentZ - p.prevZ;
 
       if (totalEnergy > 5 && totalEnergy < 35) {
-        beginShape(LINES);
-        vertex(p.currentX, p.currentY, p.currentZ);
-        vertex(p.currentX, p.currentY + vy * 3, p.currentZ + vz * 3);
-        endShape();
+        target.beginShape(LINES);
+        target.vertex(p.currentX, p.currentY, p.currentZ);
+        target.vertex(p.currentX, p.currentY + vy * 3, p.currentZ + vz * 3);
+        target.endShape();
       } else if (totalEnergy > 55) {
-        beginShape(LINES);
-        vertex(p.currentX, p.currentY, p.currentZ);
-        vertex(p.currentX, p.currentY + vy * 5, p.currentZ + vz * 5);
-        endShape();
+        target.beginShape(LINES);
+        target.vertex(p.currentX, p.currentY, p.currentZ);
+        target.vertex(p.currentX, p.currentY + vy * 5, p.currentZ + vz * 5);
+        target.endShape();
       } else if (totalEnergy > 45 && totalEnergy < 55) {
-        stroke(205);
-        strokeWeight(0.7);
-        ellipsoid(p.currentX * vx * 0.02, p.currentY * vy * 0.02, p.currentZ * vz * 0.04, 5, 5, 5);
+        target.stroke(205);
+        target.strokeWeight(0.7);
+        target.ellipsoid(p.currentX * vx * 0.02, p.currentY * vy * 0.02, p.currentZ * vz * 0.04, 5, 5, 5);
       } else if (totalEnergy > 75) {
-        stroke(215, 245, 98);
-        strokeWeight(5);
-        ellipsoid(p.currentX * vx * 0.04, p.currentY * vy * 0.02, p.currentZ * vz * 0.01);
+        target.stroke(215, 245, 98);
+        target.strokeWeight(5);
+        target.ellipsoid(p.currentX * vx * 0.04, p.currentY * vy * 0.02, p.currentZ * vz * 0.01);
       } else {
-        point(p.currentX, p.currentY, p.currentZ);  //Variation 1: dots activated by frequency
+        target.point(p.currentX, p.currentY, p.currentZ);  //Variation 1: dots activated by frequency
       }
 
       // Render secondary motion trails inline to avoid a second redundant array loop
-      stroke(p.colorHue, 85, 90, trailAlpha);
+      target.stroke(p.colorHue, 85, 90, trailAlpha);
       //strokeWeight(1);
-      line(p.prevX, p.prevY, p.prevZ, p.currentX, p.currentY, p.currentZ);
+      target.line(p.prevX, p.prevY, p.prevZ, p.currentX, p.currentY, p.currentZ);
     }
         
-    colorMode(RGB, 255, 255, 255, 255);
-    pop();
+    target.colorMode(RGB, 255, 255, 255, 255);
+    target.pop();
   }
 }

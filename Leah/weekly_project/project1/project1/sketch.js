@@ -10,8 +10,15 @@ let dominantFreq = 0.0;
 let amplitude = 12;
 let phase = 0.0;
 
+//record button
+let recordBtn;
+let mediaRecorder;
+let recordedChunks = [];
+let isRecording = false;
+
 //world view
 let cam;
+let canvas;
 
 // OpenCV working matrices
 let src, hsv, mask, contours, hierarchy;
@@ -29,11 +36,13 @@ function onOpenCvReady() {
 }
 
 function setup() {
-  let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   cam = createCamera();
 
+  // Create an offscreen buffer matching your window size
+  trailBuffer = createGraphics(windowWidth, windowHeight, WEBGL);
+
   // Forvr WebGL to use standard sRGB color space
-  
   let gl = canvas.elt.getContext('webgl2')|| canvas.elt.getContext('webgl');
   if(gl && gl.drawingBufferColorSpace){
     gl.drawingBufferColorSpace = 'srgb';
@@ -48,6 +57,10 @@ function setup() {
 
   // Reset Canvas button in DOM
   resetBtn = createButton('Reset Canvas');
+
+  // Create the record button
+  recordBtn = createButton('Record');
+  recordBtn.mousePressed(toggleRecording);
 
   // Initialize Audio
   mic = new p5.AudioIn();
@@ -130,18 +143,20 @@ function audioanAnalysis(spectrum, micLevel) {
       let curvedNorm = sqrt(norm); 
       audioData.harmonics = int(map(curvedNorm, 0, 1, 1, 12, true));
 
-      console.log("Peak Pitch:", dominantFreq.toFixed(2), "Amp:", maxAmp.toFixed(1), "Harmonics:", audioData.harmonics);
+     // console.log("Peak Pitch:", dominantFreq.toFixed(2), "Amp:", maxAmp.toFixed(1), "Harmonics:", audioData.harmonics);
     }
   }
   return audioData;
 }
 
 function draw() {
-  background(15, 25);
+  background(255);
+  trailBuffer.background(15, 25);   //semi-transparent background for the motion trail effect
 
+  trailBuffer.push();
 
   //reset button update with window size
-  resetBtn.position(width*0.5, height*0.75);
+  resetBtn.position(width*0.5-100, height*0.75);
   resetBtn.class('resetButton');
   
   // Reset button click handler resets entities back to single center state
@@ -154,6 +169,10 @@ function draw() {
   {
     orbitControl();
   }
+
+  //record button
+  recordBtn.position(width *0.5+100 , height * 0.75);
+  recordBtn.class('resetButton');
 
   // 1. Audio Frequency Analysis -> Update Harmonics
   let spectrum = fft.analyze();
@@ -170,8 +189,6 @@ function draw() {
     try {
       // Draw the current video frame onto the p5 graphics canvas buffer
       videoCtx.drawImage(capture.elt, 0, 0, videoCanvas.width, videoCanvas.height);
-
-      // pass the string ID of the canvas to cv.imread()
       src = cv.imread('opencvSourceCanvas');
 
       hsv = new cv.Mat();
@@ -182,7 +199,7 @@ function draw() {
       cv.cvtColor(src, hsv, cv.COLOR_RGBA2RGB);
       cv.cvtColor(hsv, hsv, cv.COLOR_RGB2HSV);
 
-      // Define HSV color range for hand/glove tracking (adjust thresholds as needed)
+      // Define HSV color range for hand tracking 
       let lowThresh = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), [0, 20, 70, 0]);
       let highThresh = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), [25, 255, 255, 255]);
       cv.inRange(hsv, lowThresh, highThresh, mask);
@@ -215,8 +232,8 @@ function draw() {
             let smoothedPos = handKalman.update(cx, cy);
 
             // Map OpenCV coordinates to WEBGL space
-            let targetX = map(smoothedPos.x, 0, capture.width, width/2 , width/2);
-            let targetY = map(smoothedPos.y, 0, capture.height, height/2, height/2);
+            let targetX = map(smoothedPos.x, 0, capture.width, -width/2 , width/2);
+            let targetY = map(smoothedPos.y, 0, capture.height, -height/2, height/2);
 
             // Motion follow
             if (entities.length > 0) {
@@ -262,18 +279,24 @@ function draw() {
   // Update and render all active entities, passing both audio data and the live spectrum bins
   for (let entity of entities) {
     entity.update(audio, spectrum);
-    entity.display();
+    entity.display(trailBuffer);
   }
-    console.log("audio", audio.centroid);
+  trailBuffer.pop();
+    //console.log("audio", audio.centroid);
 
-  //interface icon, sine wave
+  //Main canvas UI
+  //1. Draw in trail buffer onto the main WEBGL canvas
   push();   //isolate transformations so they don't break the rest of sketch
-  
+  translate(-width/2, -height/2);
+  image(trailBuffer, 0, 0);
+  pop();
+
+  //Interface Icon, sine wave
+  push();
   stroke(152, 144, 144);
   strokeWeight(1.5);
   noFill();
 
-  //translate(-width*0.075, height*0.2);
   translate(-width*0.05,height*0.2);
 
   beginShape();
@@ -296,6 +319,70 @@ function keyPressed() {
   if (key === 'r' || key === 'R') {
     entities = [new Entity(0, 0, 0)];
   }
+}
+
+function toggleRecording() {
+  if (!isRecording) {
+    recordedChunks = [];
+    
+    // Grabs the video stream directly from the p5 canvas at 60 fps
+    const stream = canvas.elt.captureStream(60);
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+      }
+    };
+
+  // Triggered when recording stops - opens the "Save As" window
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      await promptSaveLocation(blob);
+      
+      isRecording = false;
+      recordBtn.html('Record');
+    };
+
+    mediaRecorder.start();
+    isRecording = true;
+    recordBtn.html('Stop Recording');
+  } else {
+    mediaRecorder.stop();
+  }
+}
+
+async function promptSaveLocation(blob) {
+  // Uses the File System Access API to prompt user for a specific folder and filename
+  if ('showSaveFilePicker' in window) {
+    try {
+      const timestamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + '-' + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
+      const options = {
+        suggestedName: `unravel-recording-${timestamp}.webm`,
+        types: [{
+          description: 'WebM Video File',
+          accept: { 'video/webm': ['.webm'] },
+        }],
+      };
+      const handle = await window.showSaveFilePicker(options);
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return;
+    } catch (err) {
+      // Ignore error if the user clicks "Cancel" on the popup window
+      if (err.name !== 'AbortError') console.error(err);
+      return;
+    }
+  }
+
+  // Fallback for browsers that don't support showSaveFilePicker (like Firefox)
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'unravel-recording.webm';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function windowResized() {
