@@ -101,7 +101,7 @@ class Entity {
     let liveHue = map(this.centroid, 261.63, 523.25, 0, 360, true);
     let brightnessVal = map(totalEnergy, 0, 765, 50, 100);  //total band range (0,255)*3, bass + mid + high
 
-    // Update and render all active particles
+    // Update and render all active particles (Combined into a single loop for performance)
     for (let i = this.particles.length - 1; i >= 0; i--) {
       let p = this.particles[i];
 
@@ -130,55 +130,45 @@ class Entity {
 
       // Fade out alpha over time
       let alphaVal = map(p.life, 0, p.maxLife, 0, 255);
-
-
-      // Variation 1: dots activated by frequency
-      //stroke(liveHue, 90, brightnessVal, alphaVal);
-
-      //point(p.currentX, p.currentY, p.currentZ);
+      let trailAlpha = map(p.life, 0, p.maxLife, 0, 100);
 
       // Variation 2: trails activated by bass
       stroke(liveHue, 90, brightnessVal, alphaVal);
       
-
       //responsive visuals
       let vx = p.currentX - p.prevX;
       let vy = p.currentY - p.prevY;
       let vz = p.currentZ - p.prevZ;
 
-      if(totalEnergy > 55){
+      if (totalEnergy > 5 && totalEnergy < 35) {
         beginShape(LINES);
         vertex(p.currentX, p.currentY, p.currentZ);
         vertex(p.currentX, p.currentY + vy * 3, p.currentZ + vz * 3);
         endShape();
-        } 
-        else if (totalEnergy>45 && totalEnergy<55){
-          stroke(205);
-          strokeWeight(0.7);
-          ellipsoid(p.currentX*vx*0.02, p.currentY*vy*0.02, p.currentZ*vz*0.04, 5,5,5 );
-          
-      }
-      else if (totalEnergy>75 && totalEnergy){
-          stroke(215, 245, 98);
-          strokeWeight(10);
-          ellipsoid(p.currentX*vx*0.04, p.currentY*vy*0.02, p.currentZ*vz*0.01);
-          
-      }
-      else{
+      } else if (totalEnergy > 55) {
+        beginShape(LINES);
+        vertex(p.currentX, p.currentY, p.currentZ);
+        vertex(p.currentX, p.currentY + vy * 5, p.currentZ + vz * 5);
+        endShape();
+      } else if (totalEnergy > 45 && totalEnergy < 55) {
+        stroke(205);
+        strokeWeight(0.7);
+        ellipsoid(p.currentX * vx * 0.02, p.currentY * vy * 0.02, p.currentZ * vz * 0.04, 5, 5, 5);
+      } else if (totalEnergy > 75) {
+        stroke(215, 245, 98);
+        strokeWeight(5);
+        ellipsoid(p.currentX * vx * 0.04, p.currentY * vy * 0.02, p.currentZ * vz * 0.01);
+      } else {
         point(p.currentX, p.currentY, p.currentZ);  //Variation 1: dots activated by frequency
       }
-    }
 
-    
-    //second motion trails in diffent tone
-      for (let p of this.particles) {
-        let alphaVal = map(p.life, 0, p.maxLife, 0, 100);
-        stroke(p.hue, 85, 90, alphaVal);
-        line(p.prevX, p.prevY, p.prevZ, p.currentX, p.currentY, p.currentZ);
-      }
+      // Render secondary motion trails inline to avoid a second redundant array loop
+      stroke(p.colorHue, 85, 90, trailAlpha);
+      //strokeWeight(1);
+      line(p.prevX, p.prevY, p.prevZ, p.currentX, p.currentY, p.currentZ);
+    }
         
-      colorMode(RGB, 255, 255, 255, 255);
-      pop();
+    colorMode(RGB, 255, 255, 255, 255);
+    pop();
   }
 }
-    

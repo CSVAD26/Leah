@@ -4,10 +4,19 @@ let bandPass;
 let capture;
 let opencvReady = false;
 let resetBtn;
+let dominantFreq = 0.0;
+
+// interface sine wave icon
+let amplitude = 12;
+let phase = 0.0;
+
+//world view
+let cam;
 
 // OpenCV working matrices
 let src, hsv, mask, contours, hierarchy;
 let videoCanvas, videoCtx;
+let frameCounter = 0; // let open cv throttle very 2 frame to prevent lag.
 let handKalman; //kalman filter
 
 //sound sensitivity and initial harmonics
@@ -21,7 +30,8 @@ function onOpenCvReady() {
 
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  
+  cam = createCamera();
+
   // Forvr WebGL to use standard sRGB color space
   
   let gl = canvas.elt.getContext('webgl2')|| canvas.elt.getContext('webgl');
@@ -29,7 +39,7 @@ function setup() {
     gl.drawingBufferColorSpace = 'srgb';
   }
 
-  frameRate(60);
+  //frameRate(60);
 
   // Force enable right click to menu (so that orbitcontrol in draw does not block it)
   canvas.elt.addEventListener('contextmenu', (e) => {
@@ -110,7 +120,7 @@ function audioanAnalysis(spectrum, micLevel) {
       }
     }
 
-    let dominantFreq = peakBin * binWidth;
+    dominantFreq = peakBin * binWidth;
 
     // 4. Apply if a valid sound signal is detected above background noise
     if (maxAmp > 15) {
@@ -137,21 +147,26 @@ function draw() {
   // Reset button click handler resets entities back to single center state
   resetBtn.mousePressed(() => {
     entities = [new Entity(0, 0, 0)];
+    cam.camera(0, 0, 800, 0, 0, 0, 0, 1, 0); 
   });
 
   if ( mouseIsPressed && mouseButton == LEFT)
   {
     orbitControl();
   }
+
   // 1. Audio Frequency Analysis -> Update Harmonics
   let spectrum = fft.analyze();
   let micLevel = mic.getLevel();
 
   let audio = audioanAnalysis(spectrum, micLevel);
-  mappedHarmonics = audio.harmonics; // Update global harmonics for entities
+  mappedHarmonics = audio.centroid; // Update global harmonics for entities
 
   // 2. OpenCV Hand Tracking & Gesture Processing
-  if (opencvReady && capture.loadedmetadata) {
+  frameCounter++;
+  let runOpenCV = (frameCounter % 2 === 0);
+
+  if (opencvReady && capture.loadedmetadata && runOpenCV) {
     try {
       // Draw the current video frame onto the p5 graphics canvas buffer
       videoCtx.drawImage(capture.elt, 0, 0, videoCanvas.width, videoCanvas.height);
@@ -200,8 +215,8 @@ function draw() {
             let smoothedPos = handKalman.update(cx, cy);
 
             // Map OpenCV coordinates to WEBGL space
-            let targetX = map(smoothedPos.x, 0, capture.width, -width / 2, width / 2);
-            let targetY = map(smoothedPos.y, 0, capture.height, -height / 2, height / 2);
+            let targetX = map(smoothedPos.x, 0, capture.width, width/2 , width/2);
+            let targetY = map(smoothedPos.y, 0, capture.height, height/2, height/2);
 
             // Motion follow
             if (entities.length > 0) {
@@ -244,12 +259,36 @@ function draw() {
       console.error("OpenCV processing error:", err);
     }
   }
-
   // Update and render all active entities, passing both audio data and the live spectrum bins
   for (let entity of entities) {
     entity.update(audio, spectrum);
     entity.display();
   }
+    console.log("audio", audio.centroid);
+
+  //interface icon, sine wave
+  push();   //isolate transformations so they don't break the rest of sketch
+  
+  stroke(152, 144, 144);
+  strokeWeight(1.5);
+  noFill();
+
+  //translate(-width*0.075, height*0.2);
+  translate(-width*0.05,height*0.2);
+
+  beginShape();
+  for (let x = 0; x < width*0.15; x++) {
+    // Add phase to x to animate movement over time
+    //let frequency = map(x, 0, width, 0, TWO_PI * 2);
+    let frequency = audio.centroid;
+    //let frequency = 0.6;
+    let y = sin(x * frequency + phase) * amplitude;
+    vertex(x, y);
+    //console.log("frequency", frequency);
+  }
+  endShape();
+  phase += 0.05; // Change this value to speed up or slow down the wave
+  pop();
 }
 
 // Fallback keyboard trigger to reset or toggle split manually
