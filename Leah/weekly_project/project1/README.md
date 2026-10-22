@@ -20,9 +20,7 @@ Everything is a signal. Sound and light share the same fundamental architecture,
 
 As I recently was learning media signal processing, I came across different ways of exploring how time-domain waveforms can be transformed into different domains. The Fast Fourier Transform (FFT) acts as the mathematical bridge, converting raw temporal audio samples into the frequency domain, which helps us discover certain properties in a signal that are not intuitive to figure out in the time domain.
 
-This project leverages that transformation. By isolating a specific structural window—the octave spanning from $C_4$ to $C_5$—we map musical pitches and vocal vibrations straight into dynamic harmonic structures and the visible color spectrum. A frequency bin becomes a hue. Amplitude becomes line weight and motion. Through this mapping, audio is visualized into spatial geometry.
-
-This computational translation mirrors the uninhibited instinct of childhood play, where a single sound or mark effortlessly colors our entire imagination, turning invisible energy into visible expression.
+This project leverages that transformation. By isolating a specific structural window, which is the octave spanning from $C_4$ to $C_5$, we map musical pitches and vocal vibrations straight into dynamic harmonic structures and the visible color spectrum. In this simplified transformation, frequency bins become hue, and amplitude becomes line weight and motion. Through this mapping, audio is visualized into spatial geometry.
 
 ---
 
