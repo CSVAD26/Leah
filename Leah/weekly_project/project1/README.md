@@ -22,13 +22,12 @@ This project leverages that transformation. By isolating a specific structural w
 
 ## Technical Approach
 
-The technical architecture coordinates these systems through explicit, parallel layers:
-
-* **FFT Spectral Analysis:** Converts raw time-domain waveforms into frequency bins, allowing the code to read underlying spectral components rather than just raw volume.
-* **Bandpass Filtering:** Isolates a precise structural octave window, spanning from $C_4$ ($261.63\text{ Hz}$) to $C_5$ ($523.25\text{ Hz}$), to focus on musical pitches and vocal frequencies. Specific frequencies where there are harmonics create a uniform color, resembling harmonic waveforms.
-* **Audio-Driven Geometry:** Maps frequency bins and amplitude directly into dynamic harmonic structures, particle behaviors, and visual hues.
-* **OpenCV Hand Tracking:** Processes live webcam frames in real time, detecting hand contours, center points, and bounding box dimensions.
-* **Kalman Filter Smoothing:** Paired with OpenCV hand tracking to solve noisy input. It filters out tracking jitter and stabilizes coordinate trajectories.
+These are the technical approach I use in the project:
+* **FFT Spectral Analysis: Converts raw time-domain waveforms into frequency bins, allowing the code to read the underlying spectral components rather than just raw volume.
+Bandpass Filtering: Isolates a precise structural octave window, spanning from C4 to C5, to focus on musical pitches and vocal frequencies. Specific frequencies where there are harmonics create a uniformed color, resembling the harmonic wave forms.
+* **Audio-Driven Geometry: Maps frequency bins and amplitude directly into dynamic harmonic structures, particle behaviors, and visual hues.
+* **OpenCV Hand Tracking: Processes live webcam frames in real time, detecting hand contours, center points, and bounding box dimensions.
+* **Kalman Filter Smoothing: This is paired with Open CV Hand Tracking to solve the noisy hand movement inputs. It filters out tracking jitter and stabilizes coordinate trajectories.
 
 ---
 
