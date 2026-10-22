@@ -15,6 +15,7 @@ let recordBtn;
 let mediaRecorder;
 let recordedChunks = [];
 let isRecording = false;
+let audioDestination;
 
 //world view
 let cam;
@@ -74,6 +75,10 @@ function setup() {
 
   mic.connect(bandPass);
   bandPass.disconnect(); 
+
+ // Create a Web Audio stream destination to capture audio for recording
+  audioDestination = getAudioContext().createMediaStreamDestination();
+  bandPass.connect(audioDestination); // Route your filtered audio stream into the recorder
 
   // Initialize FFT and point it to the BandPass filtered signal
   fft = new p5.FFT();
@@ -297,14 +302,11 @@ function draw() {
   strokeWeight(1.5);
   noFill();
 
-  translate(-width*0.05,height*0.2);
+  translate(-width*0.05,height*0.2, 50); // z depth =50 to pop up from the buffer layer
 
   beginShape();
   for (let x = 0; x < width*0.15; x++) {
-    // Add phase to x to animate movement over time
-    //let frequency = map(x, 0, width, 0, TWO_PI * 2);
-    let frequency = audio.centroid;
-    //let frequency = 0.6;
+    let frequency = audio.centroid;   ////let frequency = map(x, 0, width, 0, TWO_PI * 2);
     let y = sin(x * frequency + phase) * amplitude;
     vertex(x, y);
     //console.log("frequency", frequency);
@@ -326,8 +328,13 @@ function toggleRecording() {
     recordedChunks = [];
     
     // Grabs the video stream directly from the p5 canvas at 60 fps
-    const stream = canvas.elt.captureStream(60);
-    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    const canvasstream = canvas.elt.captureStream(60);
+    const audioStream = audioDestination.stream;
+
+    //combine video and audio tracks into a single media stream
+    const combinedStream = new MediaStream([...canvasstream.getVideoTracks(), ...audioStream.getAudioTracks()]);
+
+    mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
 
     mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
