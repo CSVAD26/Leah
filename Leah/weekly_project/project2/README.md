@@ -10,12 +10,15 @@ The result is a visual diary displaying timely patterns of my photography. The c
 
 ## Functionality
 
-The page presents four graphs in this order:
+The page presents five graphs in this order:
 
-1. **Total photographs by hour.** A bar chart groups photographs into 24 capture hours, from 00 through 23. The vertical axis shows the number of photographs. The year selector switches between one year and the complete collection.
-2. **Average photographs by hour.** A line and shaded area show the average number of photographs per calendar day at each hour. Each hourly total is divided by the calendar days covered by the selected range, including days without photographs between the first and last imported dates. Hovering reveals an hourly average. This chart has the same shape as the total chart because all 24 values share one denominator, but its vertical scale expresses a daily rate.
-3. **Photographs by weekday.** Seven bars show Monday through Sunday, with counts above the bars. Pink highlights identify the busiest weekday, including all tied days. This chart follows the year selector.
-4. **Year-by-hour heatmap.** Rows represent years and columns represent hours. Hovering reveals the year, hour, and exact photo count. In the current calculation, color intensity represents an hour's share of that year's photographs; the hover value gives the absolute count. The heatmap keeps all years visible while the other three graphs follow the year selector.
+1. **Navigate time.** The first graph shows one dot per photograph, with color identifying its year. From a distance, the dots form clusters that show how photography is distributed across the day. With a timestamp CSV loaded, horizontal position is the recorded time of day, including minutes and seconds. Vertical position is the cumulative photo count within that hour, ordered by capture date: higher dots are later photographs in the same hourly group. This is a count axis, not a calendar-date axis. Zooming to 6× or closer reveals individual timestamp strings where there is enough room to read them. Hovering or clicking a dot provides its complete timestamp and position in the hourly count. Dots stay fixed in their data-based positions while the viewer navigates by zooming and panning. There is no capture-date playback or date slider.
+2. **Total photographs by hour.** A bar chart groups photographs into 24 capture hours, from 00 through 23. The vertical axis shows the number of photographs. The year selector switches between one year and the complete collection.
+3. **Average photographs by hour.** A line and shaded area show the average number of photographs per calendar day at each hour. Each hourly total is divided by the calendar days covered by the selected range, including days without photographs between the first and last imported dates. Hovering reveals an hourly average. This chart has the same shape as the total chart because all 24 values share one denominator, but its vertical scale expresses a daily rate.
+4. **Photographs by weekday.** Seven bars show Monday through Sunday, with counts above the bars. Pink highlights identify the busiest weekday, including all tied days. This chart follows the year selector.
+5. **Year-by-hour heatmap.** Rows represent years and columns represent hours. Hovering reveals the year, hour, and exact photo count. In the current calculation, color intensity represents an hour's share of that year's photographs; the hover value gives the absolute count. The heatmap keeps all years visible while the other graphs follow the year selector.
+
+The opening graph works in two modes. Its default view reconstructs the correct number of dots from the exported aggregates as hourly stacks. Because those aggregates contain no individual dates or minutes, they cannot provide exact timestamp labels or precise positions inside each hour. Choosing **Load timestamp CSV** and selecting the local `photo_times_private.csv` adds those details. The file is parsed in browser memory and is not uploaded, saved by the page, or embedded in the website files. Without a CSV, close-up labels identify the year, capture-hour group, and a display number. Loading a different CSV changes only the opening graph; the four summary charts continue to use the exported dataset. Capture times remain camera-local, without converting timezone offsets. **Use exported data** removes the imported records from the graph and returns to the aggregate view.
 
 ## Design principles
 
@@ -33,6 +36,8 @@ Next, `private-tools/export_to_p5.py` groups the records by year and hour, deriv
 
 I developed the visualization in stages. I started with hourly totals, then added daily averages to make the scale easier to interpret. The weekday chart introduced another way of examining routines, and the heatmap made it possible to compare years together. I refined the axes, added hover values, matched the headings, and moved the heatmap to the bottom. These changes taught me that presentation details affect whether a visualization is understandable, even when its underlying numbers are correct.
 
+I then added the opening graph in `submission/navigate-time.js` to explore individual records alongside the summaries. I tried an attractor-like arrangement with moving dots, but the movement did not have a clear relationship to when I took photographs. I revised the layout so that a photo's time of day and its place in the hourly count determine its position. Zooming changes the level of detail: the same collection can be read as clusters at a distance and as timestamp text up close. I also separated local timestamp loading from the public aggregates so that this more detailed view does not require publishing individual capture dates.
+
 ## Reflections
 
 Looking at the graphs made me more aware of how often I have been staying up late over the past few years. The photos taken late at night and after midnight reflect moments when I was still awake and using my phone's camera. When I scroll through my photo library, I usually focus on what is in each picture or the memory behind it. Seeing those same photos organized by time helped me notice a part of my routine that I would normally overlook.
@@ -40,6 +45,10 @@ Looking at the graphs made me more aware of how often I have been staying up lat
 The graphs also helped me think about how my phone fits into my daily life. Since I almost always carry it with me, taking a photo is one of the ways I use my phone throughout the day. These timestamps give me a record of that activity, including during late-night hours. They only capture moments when I took photographs, though. I also use my phone without taking pictures, so the graphs cannot show my total screen time or tell me exactly when I went to sleep. I see them as a way to reflect on my habits alongside what I already know about my sleep schedule.
 
 I also found it interesting that the afternoon was my busiest time for photography overall, even though the late-night photos stood out to me personally. This helped me understand that different parts of the data can reveal different aspects of my routine. Comparing hours, weekdays, and years lets me explore those patterns instead of focusing only on the highest bar. I also need to consider how travel, missing photos, or taking many pictures during one event might affect the results. The project has encouraged me to ask more questions about the connection between my photography habits and my everyday life.
+
+The first graph adds another way of looking at that routine. At the overview scale, I see the collection as a pattern of activity across the day. As I zoom in, the dots become individual timestamps, making it easier to connect the larger pattern with particular moments. This change in scale helps me move between thinking about my habits over several years and looking closely at a single recorded moment. It also reminds me that a dense cluster is made up of many individual photographs rather than one continuous period of phone use.
+
+Developing this graph also changed how I think about movement in data visualization. The orbiting dots were visually interesting, but I found it difficult to explain what their motion meant about my photography. Keeping each point aligned with its recorded time gives the viewer a clearer relationship between the display and the data. The interaction now comes from choosing where to look and how closely to examine it. I learned that an engaging visualization can invite exploration through navigation and changes in detail, without needing constant animation.
 
 ## Outcomes and next steps
 
@@ -62,10 +71,20 @@ You need Python 3 and a web browser. The website uses aggregate data already emb
    ```
 
 4. Open [http://localhost:8000](http://localhost:8000) in your browser.
-5. Choose a year, hover over the average chart and heatmap, and scroll to compare all four graphs.
+5. Explore the opening graph using the instructions below, choose a year, and scroll to compare all five graphs. Hover over the average chart and heatmap to see exact values.
 6. Press `Control+C` in the terminal to stop the server.
 
 There is no npm installation or build step. `submission/index.html` loads the local p5.js libraries, stylesheet, and sketch.
+
+### How to use the first graph: Navigate time
+
+1. **Start with the overview.** The first graph displays one dot per photograph using the existing aggregate data. Colors correspond to the years listed below the graph. Select **All years** or an individual year using the page's year selector.
+2. **Load timestamps for a detailed view.** Click **Load timestamp CSV** and choose `private-data/photo_times_private.csv` from your computer. This enables exact time-of-day positions and full timestamp labels. The CSV stays in the browser tab; it is not sent to a server. The graph accepts the `taken_at` column produced by the JSON-cleaning script, the `timestamp` column produced by the image-analysis script, or separate `date` and `time` columns.
+3. **Zoom into a cluster.** Scroll over the graph or use the **+** and **−** buttons. Mouse-wheel zoom centers on the pointer. At 6× zoom and above, timestamp strings appear beside points where they fit. Overlapping labels are omitted for readability; zoom closer or inspect a particular dot to see its details.
+4. **Move around.** Drag the graph to pan. On a touch screen, drag to pan and pinch to zoom. For keyboard navigation, focus the canvas by clicking it or pressing Tab, then use **+**, **−**, and the **arrow keys**.
+5. **Inspect a photograph.** Hover over a dot for its tooltip or click it to keep its details in the text below the graph. The horizontal axis shows capture time of day. The vertical axis shows the photo's running count within its hour, so a higher point was captured later within that hourly group. It does not show elapsed time or the duration of phone use.
+6. **Return to an overview.** Click **Reset view** or press **0** while the canvas is focused. To remove the locally loaded timestamps and return to the aggregate-only view, click **Use exported data**. Refreshing the page also clears the imported data.
+7. **Compare with the summaries.** Click **Explore the summary charts** or scroll down to the hourly totals, daily averages, weekday totals, and yearly heatmap. These views help place an individual timestamp in the context of the wider collection.
 
 ### Update the data locally
 
@@ -97,6 +116,7 @@ Replace `/path/to/exported/photos` with the actual folder path. Refresh the brow
 | `README.md` | Project description, process, reflections, findings, and execution instructions. |
 | `submission/index.html` | Page structure and library loading. |
 | `submission/sketch.js` | Aggregate data, drawing, filtering, and hover interactions. |
+| `submission/navigate-time.js` | Time-aligned photo dots, local CSV parsing, timestamp labels, and mouse, touch, and keyboard navigation. |
 | `submission/style.css` | Page layout, colors, and responsive styles. |
 | `submission/library/` | Local p5.js and p5.sound libraries. |
 | `submission/jsconfig.json` and `submission/p5-globals.d.ts` | Editor type-checking support; no build step is required. |

@@ -5,5 +5,5 @@
     "allowJs": true,
     "noEmit": true
   },
-  "include": ["sketch.js", "p5-globals.d.ts"]
+  "include": ["sketch.js", "navigate-time.js", "p5-globals.d.ts"]
 }

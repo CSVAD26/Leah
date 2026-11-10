@@ -8,6 +8,7 @@
   <script defer src="library/p5.min.js"></script>
   <script defer src="library/p5.sound.min.js"></script>
   <script defer src="sketch.js"></script>
+  <script defer src="navigate-time.js"></script>
 </head>
 <body>
   <main>
@@ -15,6 +16,33 @@
       <p>An exploration of the time of day I took photos with my phone. </p>
     </header>
     <div id="controls"><label>Year <select id="year-select"><option value="all">All years</option></select></label><div class="legend"><span class="dot"></span><span>Photo count by capture hour</span></div></div>
+    <section id="time-navigation" aria-labelledby="navigate-heading">
+      <div class="navigate-heading">
+        <div><div class="eyebrow">EXPLORE PHOTO TIMESTAMPS</div><h2 id="navigate-heading">Navigate time</h2></div>
+        <a href="#canvas-holder">Explore the summary charts ↓</a>
+      </div>
+      <p class="navigate-description">Each dot is one photo. With timestamps loaded, horizontal position shows the capture time of day, and height is the running photo count within that hour. Zoom in to read individual timestamps and zoom out to compare the clusters.</p>
+      <div class="navigate-toolbar" aria-label="Time navigation controls">
+        <div class="navigate-buttons">
+          <button id="navigate-in" type="button" aria-label="Zoom in">+</button>
+          <button id="navigate-out" type="button" aria-label="Zoom out">−</button>
+          <button id="navigate-reset" type="button">Reset view</button>
+        </div>
+        <div class="navigate-buttons">
+          <input id="navigate-file" type="file" accept=".csv,text/csv" hidden>
+          <button id="navigate-load" type="button">Load timestamp CSV</button>
+          <button id="navigate-clear" type="button" hidden>Use exported data</button>
+        </div>
+      </div>
+      <div id="navigate-stage">
+        <canvas id="navigate-canvas" tabindex="0" role="img" aria-label="Zoomable photo timestamp graph. With a CSV loaded, horizontal position is capture time of day and vertical position is the cumulative photo count within each hour in capture-date order. Scroll or use plus and minus to zoom, drag or use arrow keys to pan, and press zero to reset. Load a local CSV to read exact timestamps."></canvas>
+        <div id="navigate-tooltip" hidden></div>
+      </div>
+      <div id="navigate-years" aria-label="Dot colors by year"></div>
+      <p id="navigate-status" role="status" aria-live="polite"></p>
+      <p class="navigate-help">Scroll to zoom · Drag to pan · Pinch on touch screens · Click a dot to inspect it. </p>
+      <p id="navigate-detail" aria-live="polite">Load your private <code>photo_times_private.csv</code> to see exact timestamps. The file stays in this browser tab and is not uploaded or saved by the page.</p>
+    </section>
     <div id="canvas-holder" role="img" aria-label="Hourly photo totals, average photos per day by capture hour, Monday-to-Sunday photo totals with the busiest day highlighted, and yearly heatmap. The year selector filters the totals, average, and weekday charts."></div>
   </main>
 </body>

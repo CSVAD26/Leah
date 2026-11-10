@@ -80,7 +80,33 @@
         color:var(--secondary);
         margin-top:12px
     }
+    [hidden]{display:none!important}
+    #time-navigation{margin:34px 0 48px;color:#20272b}
+    .navigate-heading{display:flex;justify-content:space-between;align-items:end;gap:18px}
+    .navigate-heading h2{font-size:28px;font-weight:500;letter-spacing:-.035em;margin:5px 0}
+    .navigate-heading a{color:var(--secondary);font-size:12px;white-space:nowrap}
+    .navigate-description{max-width:760px;color:#707c82;font-size:14px}
+    .navigate-toolbar,.navigate-buttons{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+    .navigate-toolbar{justify-content:space-between;margin:18px 0 12px}
+    .navigate-buttons button{font:inherit;font-size:12px;background:#fff;color:#20272b;border:1px solid var(--line);border-radius:6px;padding:9px 12px;cursor:pointer;min-height:38px}
+    .navigate-buttons button:not(:disabled):hover{border-color:var(--accent);background:#fff5f8}
+    .navigate-buttons button:disabled{opacity:.5;cursor:not-allowed}
+    .navigate-buttons button:focus-visible,.navigate-heading a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    #navigate-stage{position:relative;height:clamp(380px,60vh,600px);border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
+    #navigate-canvas{width:100%;height:100%;cursor:grab;touch-action:none}
+    #navigate-canvas:active{cursor:grabbing}
+    #navigate-canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+    #navigate-tooltip{position:absolute;max-width:min(290px,90%);pointer-events:none;background:#20272b;color:white;border-radius:5px;padding:8px 11px;font:11px/1.5 ui-monospace,monospace;white-space:pre-line;overflow-wrap:anywhere;box-shadow:0 3px 16px #20272b22}
+    #navigate-years{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;color:#707c82;font-size:11px}
+    #navigate-years span{display:inline-flex;align-items:center;gap:6px}
+    #navigate-years i{width:7px;height:7px;border-radius:50%}
+    #navigate-status{font-size:12px;color:var(--secondary);margin:12px 0 6px}
+    .navigate-help,#navigate-detail{font-size:12px;color:#707c82;margin:6px 0}
+    #navigate-detail{min-height:38px}
     @media(max-width:600px){
+        .navigate-heading{display:block}
+        .navigate-heading a{display:inline-block;margin-top:8px}
+        .navigate-toolbar{justify-content:flex-start}
         main{
             padding:26px 13px
         }
