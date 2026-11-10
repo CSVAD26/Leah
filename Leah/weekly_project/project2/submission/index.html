@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>When do I Photograph — A Photo Time Diary</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="library/p5.min.js"></script>
+  <script defer src="library/p5.sound.min.js"></script>
+  <script defer src="sketch.js"></script>
+</head>
+<body>
+  <main>
+    <header><div class="eyebrow">PERSONAL DATA / 2019—2026</div><h1>When do I Photograph?</h1>
+      <p>An exploration of the time of day I took photos with my phone. </p>
+    </header>
+    <div id="controls"><label>Year <select id="year-select"><option value="all">All years</option></select></label><div class="legend"><span class="dot"></span><span>Photo count by capture hour</span></div></div>
+    <div id="canvas-holder" role="img" aria-label="Hourly photo totals, average photos per day by capture hour, Monday-to-Sunday photo totals with the busiest day highlighted, and yearly heatmap. The year selector filters the totals, average, and weekday charts."></div>
+  </main>
+</body>
+</html>

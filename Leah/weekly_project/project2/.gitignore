@@ -1,0 +1,5 @@
+private-data/
+.venv/
+__pycache__/
+.DS_Store
+osxphotos_crash.log
