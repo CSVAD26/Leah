@@ -4,9 +4,9 @@ A personal photo time diary made with p5.js, HTML, CSS, and local Python data-pr
 
 ## Intention
 
-I almost always carry my phone with me, and I use it to take photographs throughout my daily life. Because the camera is so accessible, taking a picture can become an automatic action. My intention was to understand when I tend to reach for my camera and which parts of my daily routine appear in my photographs. I wanted to step back from the individual images and ask: **When am I most inclined to take photographs?** This project uses their capture times to explore that question across hours, weekdays, and years.
+I almost always carry my phone with me, and I use it to take photographs throughout my daily life. It becomes so accessible that taking pictures has become part of my automatic action whenever I want to document. My intention was to understand when I tend to capture the moment and which parts of my daily routine appear in my photographs. For this project I wanted to understand **When am I most inclined to take photographs?** and analyze my habits in a given time range from 2019-2026. This project uses the timestamps of my photos to explore that question across hours, weekdays, and years.
 
-Instead of displaying the photographs themselves, I turn their metadata into a visual diary. The current dataset contains **41,487 photographs from 2019 through 2026**. Looking at their distribution helps me recognize patterns that are difficult to notice while scrolling through a photo library. The project connects a familiar creative activity with a less visible record of my routines and photography-related phone use.
+The result is a visual diary displaying timely patterns of my photography. The current dataset contains **41,487 photographs from 2019 through 2026**. Looking at their distribution helps me recognize patterns that are difficult to notice while scrolling through a photo library. The project connects a familiar creative activity with a less visible record of my routines and photography-related phone use.
 
 ## Functionality
 
